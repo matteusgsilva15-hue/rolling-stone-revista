@@ -125,6 +125,25 @@ function isAllowedFirebaseUser(user) {
   return !!email && allowed.includes(email);
 }
 
+function adminCanPublish() {
+  if (!firebaseEnabled()) return true;
+  ensureFirebaseInit();
+  const user = currentFirebaseUser();
+  return !!user && isAllowedFirebaseUser(user);
+}
+
+function updateAdminPublishLock() {
+  const ids = ['critic-btn', 'news-btn', 'interview-btn', 'chart-btn', 'cover-btn'];
+  const can = adminCanPublish();
+
+  ids.forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.disabled = !can;
+    el.title = can ? '' : 'Faça login com Google para publicar.';
+  });
+}
+
 function updateFirebaseAuthUI() {
   const box = document.getElementById('firebase-auth-box');
   const statusEl = document.getElementById('firebase-auth-status');
@@ -134,6 +153,7 @@ function updateFirebaseAuthUI() {
 
   if (!firebaseEnabled()) {
     box.style.display = 'none';
+    updateAdminPublishLock();
     return;
   }
 
@@ -144,6 +164,7 @@ function updateFirebaseAuthUI() {
     statusEl.textContent = 'Não logado. Faça login para publicar.';
     loginBtn.disabled = false;
     logoutBtn.disabled = true;
+    updateAdminPublishLock();
     return;
   }
 
@@ -152,12 +173,14 @@ function updateFirebaseAuthUI() {
     statusEl.textContent = `Conta não autorizada: ${email || '(sem email)'}`;
     loginBtn.disabled = false;
     logoutBtn.disabled = false;
+    updateAdminPublishLock();
     return;
   }
 
   statusEl.textContent = `Logado: ${email || '(sem email)'}`;
   loginBtn.disabled = true;
   logoutBtn.disabled = false;
+  updateAdminPublishLock();
 }
 
 function setupFirebaseAuthUI() {
@@ -173,6 +196,7 @@ function setupFirebaseAuthUI() {
 
   ensureFirebaseInit();
   updateFirebaseAuthUI();
+  updateAdminPublishLock();
 
   if (!loginBtn.__bound) {
     loginBtn.__bound = true;

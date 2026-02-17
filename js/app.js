@@ -80,6 +80,11 @@ function firebaseEnabled() {
   return isFirebaseConfigured() && isFirebaseSdkLoaded();
 }
 
+function firebaseStorageWanted() {
+  // Permite desligar Storage (ex.: quando o projeto não quer/precisa de Firebase Storage).
+  return !(FIREBASE_RUNTIME && FIREBASE_RUNTIME.disableStorage === true);
+}
+
 function cloudinaryEnabled() {
   const cn = String(CLOUDINARY_RUNTIME && CLOUDINARY_RUNTIME.cloudName ? CLOUDINARY_RUNTIME.cloudName : '').trim();
   const preset = String(CLOUDINARY_RUNTIME && CLOUDINARY_RUNTIME.uploadPreset ? CLOUDINARY_RUNTIME.uploadPreset : '').trim();
@@ -103,7 +108,7 @@ function ensureFirebaseInit() {
     }
     __fbAuth = window.firebase.auth();
     __fbDb = window.firebase.firestore();
-    __fbStorage = window.firebase.storage();
+    __fbStorage = (firebaseStorageWanted() && window.firebase.storage) ? window.firebase.storage() : null;
     __fbInited = true;
     if (isDebugMode()) console.log('[FIREBASE] init ok');
     return true;
@@ -111,6 +116,13 @@ function ensureFirebaseInit() {
     console.warn('[FIREBASE] init failed', e);
     return false;
   }
+}
+
+function firebaseStorageEnabled() {
+  if (!firebaseEnabled()) return false;
+  if (!firebaseStorageWanted()) return false;
+  ensureFirebaseInit();
+  return !!__fbStorage;
 }
 
 function currentFirebaseUser() {
@@ -332,6 +344,7 @@ async function cloudinaryUploadFile(file) {
 
 async function firebaseUploadDataUrl(filename, dataUrl) {
   if (!ensureFirebaseInit()) throw new Error('Firebase não inicializado');
+  if (!firebaseStorageEnabled()) throw new Error('Firebase Storage desativado/indisponível');
   await requireFirebaseLogin();
 
   const safe = sanitizeStorageName(filename);
@@ -1856,9 +1869,8 @@ async function uploadImage(fileInput) {
 
   const file = fileInput.files[0];
 
-  // Fast path: Cloudinary upload can send the File directly (no Base64 conversion).
-  // This is significantly faster for larger images.
-  if (cloudinaryEnabled() && !firebaseEnabled()) {
+  // Prefer Cloudinary when configured (faster + avoids Firebase Storage billing/CORS issues).
+  if (cloudinaryEnabled()) {
     const t0 = performance.now();
     logLine(`Uploading image (Cloudinary): ${file.name}`, 'info');
     const url = await cloudinaryUploadFile(file);
@@ -1875,7 +1887,7 @@ async function uploadImage(fileInput) {
         const base64 = e.target.result;
         logLine(`Uploading image: ${file.name}`, 'info');
 
-        if (firebaseEnabled()) {
+        if (firebaseEnabled() && firebaseStorageEnabled()) {
           try {
             const url = await firebaseUploadDataUrl(file.name, String(base64));
             logLine(`Image uploaded (Firebase): ${file.name}`, 'success');
@@ -1886,14 +1898,7 @@ async function uploadImage(fileInput) {
           }
         }
 
-        if (cloudinaryEnabled()) {
-          const t0 = performance.now();
-          const url = await cloudinaryUploadFile(file);
-          const ms = Math.round(performance.now() - t0);
-          logLine(`Image uploaded (Cloudinary) in ${ms}ms: ${file.name}`, 'success');
-          resolve(url);
-          return;
-        }
+        // Cloudinary já teria sido usado no fast-path acima.
 
         const hasBackend = await detectBackend();
         if (hasBackend) {

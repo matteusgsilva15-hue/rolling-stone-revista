@@ -3813,8 +3813,18 @@ function renderCriticReview(review) {
     ? `critic-review-verdict-cover-wrap vinyl-tier-${escapeHtml(vinylTier)}`
     : `critic-review-verdict-cover-wrap no-vinyl release-seal--${escapeHtml(releaseType)}`;
 
+  const sealHtml = (!isAlbumReview && sealText)
+    ? `
+      <div class="critic-review-seal-badge" aria-hidden="true">
+        <div class="critic-review-seal-text">${escapeHtml(sealText)}</div>
+        <div class="critic-review-seal-stars" aria-hidden="true">★ ★ ★</div>
+      </div>
+    `.trim()
+    : '';
+
   const verdictCoverHtml = `
-    <div class="${verdictCoverWrapClass}" ${!isAlbumReview ? `data-seal="${escapeHtml(sealText)}"` : ''} aria-label="Album cover">
+    <div class="${verdictCoverWrapClass}" aria-label="Album cover">
+      ${sealHtml}
       <div class="critic-review-verdict-cover">
         <img src="${escapeHtml(safeCoverUrl)}" alt="${escapeHtml(safeAlbumTitle || 'Album cover')}">
       </div>

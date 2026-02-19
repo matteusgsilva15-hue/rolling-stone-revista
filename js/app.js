@@ -3816,8 +3816,8 @@ function renderCriticReview(review) {
   const sealHtml = (!isAlbumReview && sealText)
     ? `
       <div class="critic-review-seal-pill" aria-hidden="true">
-        <span class="critic-review-seal-pill-cd critic-review-seal-pill-cd--left" aria-hidden="true"></span>
-        <span class="critic-review-seal-pill-cd critic-review-seal-pill-cd--right" aria-hidden="true"></span>
+        <span class="critic-review-seal-pill-star critic-review-seal-pill-star--top" aria-hidden="true">★</span>
+        <span class="critic-review-seal-pill-star critic-review-seal-pill-star--bottom" aria-hidden="true">★</span>
         <div class="critic-review-seal-pill-text">${escapeHtml(sealText)}</div>
       </div>
     `.trim()

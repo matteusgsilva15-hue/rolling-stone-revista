@@ -1564,27 +1564,27 @@
       border-radius: 0;
       width: 100vw;
       margin-left: calc(50% - 50vw);
-      padding: 5rem 0 4.25rem;
+      padding: 3.75rem 0 3.1rem;
       position: relative;
       overflow: hidden;
     }
 
     @media (max-width: 768px) {
       .critic-review-hero {
-        padding: 3.75rem 0 3.25rem;
+        padding: 3.2rem 0 2.7rem;
       }
     }
 
     @media (max-width: 480px) {
       .critic-review-hero {
-        padding: 3.1rem 0 2.75rem;
+        padding: 2.8rem 0 2.35rem;
       }
     }
 
     .critic-review-hero-grid {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 2.5rem;
+      gap: 2.1rem;
       align-items: end;
     }
 
@@ -1601,7 +1601,7 @@
       font-size: 0.7rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.75);
+      color: var(--red);
       font-weight: 800;
       margin: 0 0 0.9rem;
     }
@@ -1665,14 +1665,25 @@
       font-weight: 400;
       font-style: italic;
       margin: 0;
+      padding-bottom: 0.85rem;
       max-width: 95%;
+    }
+
+    .critic-review-subheadline::after {
+      content: '';
+      display: block;
+      height: 2px;
+      width: 56px;
+      background: var(--red);
+      margin-top: 1rem;
+      opacity: 0.9;
     }
 
     .critic-review-byline {
       display: flex;
       align-items: center;
       gap: 1rem;
-      padding-top: 1.5rem;
+      padding-top: 1.05rem;
       border-top: 1px solid rgba(255,255,255,0.14);
       font-family: 'DM Sans', sans-serif;
       font-size: 0.85rem;
@@ -1729,6 +1740,17 @@
       text-align: right;
     }
 
+    .critic-review-score::before {
+      content: '';
+      display: block;
+      height: 2px;
+      width: 56px;
+      background: var(--red);
+      opacity: 0.9;
+      margin-bottom: 0.7rem;
+      align-self: flex-end;
+    }
+
     @media (max-width: 768px) {
       .critic-review-score {
         align-items: flex-start;
@@ -1744,6 +1766,10 @@
       letter-spacing: -0.02em;
       color: #ffffff;
     }
+
+    .critic-review-score--excellent .critic-review-score-value { color: #16a34a; }
+    .critic-review-score--good .critic-review-score-value { color: #ca8a04; }
+    .critic-review-score--poor .critic-review-score-value { color: #dc2626; }
 
     @media (max-width: 480px) {
       .critic-review-score-value {
@@ -1768,16 +1794,30 @@
     }
 
     .critic-review-body-section {
-      background: #ffffff;
+      background: #f4f4f4;
       padding: 0;
     }
 
     .critic-review-cover-bleed {
-      width: 100vw;
-      margin-left: calc(50% - 50vw);
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2.5rem;
       aspect-ratio: 16/9;
       background: #0a0a0a;
       overflow: hidden;
+    }
+
+    @media (max-width: 768px) {
+      .critic-review-cover-bleed {
+        padding: 0 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .critic-review-cover-bleed {
+        padding: 0 1rem;
+      }
     }
 
     .critic-review-cover-bleed img {
@@ -1800,20 +1840,20 @@
     }
 
     .critic-review-prose {
-      max-width: 740px;
+      max-width: 700px;
       margin: 0 auto;
-      padding: 3.25rem 0 2.25rem;
+      padding: 2.25rem 0 2.1rem;
     }
 
     @media (max-width: 768px) {
       .critic-review-prose {
-        padding: 2.6rem 0 2rem;
+        padding: 2.05rem 0 1.9rem;
       }
     }
 
     @media (max-width: 480px) {
       .critic-review-prose {
-        padding: 2.1rem 0 1.75rem;
+        padding: 1.85rem 0 1.65rem;
       }
     }
 
@@ -1834,7 +1874,7 @@
 
     .critic-review-paragraph.first-paragraph::first-letter {
       font-family: 'Playfair Display', serif;
-      font-size: 4.6rem;
+      font-size: 4.25rem;
       font-weight: 900;
       line-height: 0.75;
       float: left;
@@ -1971,7 +2011,7 @@
     .critic-review-pullquote {
       margin: 1.5rem 0;
       padding: 2.25rem 2.4rem;
-      background: rgba(0,0,0,0.018);
+      background: #ededed;
       border-left: 8px solid var(--red);
     }
 

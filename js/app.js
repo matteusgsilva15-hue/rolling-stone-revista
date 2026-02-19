@@ -3746,7 +3746,7 @@ function renderCriticReview(review) {
   const publishedAt = review.publishedAt || review.date || review.timestamp;
 
   const scoreHtml = Number.isFinite(scoreValue) ? `
-    <div class="critic-review-score" aria-label="Score">
+    <div class="critic-review-score critic-review-score--${escapeHtml(tier)}" aria-label="Score">
       <div class="critic-review-score-value">${escapeHtml(scoreDisplay)}</div>
       <div class="critic-review-score-label">Score</div>
       <div class="critic-review-score-note">out of 10</div>

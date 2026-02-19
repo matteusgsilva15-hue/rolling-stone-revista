@@ -350,7 +350,7 @@
     }
 
     .critic-review-verdict.critic-review-verdict-card + .critic-review-divider {
-      margin-top: 1.25rem;
+      margin-top: 1.05rem;
     }
 
     .critic-review-verdict.critic-review-verdict-card {
@@ -372,13 +372,6 @@
           rgba(255,255,255,0.075) 22%,
           rgba(255,255,255,0.028) 55%,
           rgba(0,0,0,0.20) 100%
-        ),
-        repeating-linear-gradient(
-          90deg,
-          rgba(255,255,255,0.06) 0px,
-          rgba(255,255,255,0.06) 1px,
-          rgba(255,255,255,0.0) 1px,
-          rgba(255,255,255,0.0) 4px
         );
     }
 

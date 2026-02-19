@@ -3757,7 +3757,7 @@ function renderCriticReview(review) {
     <div class="critic-review-score critic-review-score--${escapeHtml(tier)}" aria-label="Score">
       <div class="critic-review-score-value">${escapeHtml(scoreDisplay)}</div>
       <div class="critic-review-score-label">CRITICAL SCORE</div>
-      <div class="critic-review-score-note">Out of 10</div>
+      <div class="critic-review-score-note">${escapeHtml(scoreDisplay)} / 10</div>
     </div>
   ` : '';
 

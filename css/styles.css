@@ -371,14 +371,14 @@
         linear-gradient(
           90deg,
           rgba(255,255,255,0.18) 0%,
-          rgba(255,255,255,0.10) 38%,
-          rgba(255,255,255,0.00) 68%
+          rgba(255,255,255,0.10) 32%,
+          rgba(255,255,255,0.00) 60%
         ),
         linear-gradient(
           90deg,
           var(--red) 0%,
-          var(--red) 18%,
-          #ffffff 72%,
+          var(--red) 12%,
+          #ffffff 62%,
           #ffffff 100%
         );
     }

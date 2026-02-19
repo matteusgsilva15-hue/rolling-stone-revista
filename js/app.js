@@ -3787,6 +3787,12 @@ function renderCriticReview(review) {
   const safeAlbumTitle = String(review.album || review.title || '').trim();
   const safeArtist = String(review.artist || '').trim();
 
+  const artistIconSvg = `
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+      <path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.93V21h2v-3.07A7 7 0 0 0 19 11h-2z"/>
+    </svg>
+  `.trim();
+
   const safeRollingStoneLogoUrl = sanitizeUrl('https://images.seeklogo.com/logo-png/42/1/rolling-stone-logo-png_seeklogo-427429.png') || '';
 
   const verdictCoverHtml = `
@@ -3811,7 +3817,7 @@ function renderCriticReview(review) {
           <div class="critic-review-intro">
             <div class="critic-review-label">ALBUM REVIEW</div>
             <h1 class="article-dark-headline">${escapeHtml(safeAlbumTitle)}</h1>
-            ${safeArtist ? `<p class="critic-review-artistline">${escapeHtml(safeArtist)}</p>` : ''}
+            ${safeArtist ? `<p class="critic-review-artistline"><span class="critic-review-artist-icon" aria-hidden="true">${artistIconSvg}</span>${escapeHtml(safeArtist)}</p>` : ''}
             ${subtitle ? `<p class="article-dark-deck">${escapeHtml(subtitle)}</p>` : ''}
           </div>
 

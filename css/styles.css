@@ -2063,7 +2063,7 @@
     .critic-review-score--good .critic-review-score-value { color: #ca8a04; }
     .critic-review-score--poor .critic-review-score-value { color: #dc2626; }
 
-    .critic-review-verdict-card .critic-review-score-value {
+    .critic-review-verdict-card .critic-review-score:not(.critic-review-score--excellent):not(.critic-review-score--good):not(.critic-review-score--poor) .critic-review-score-value {
       color: #111111;
     }
 

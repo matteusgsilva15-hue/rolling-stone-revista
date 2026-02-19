@@ -2592,8 +2592,39 @@
       color: rgba(255,255,255,0.66);
     }
 
+    .critic-review-surface .article-paragraph.article-paragraph--dark {
+      font-size: 1.1rem;
+      line-height: 2.0;
+    }
+
     .article-paragraph.first-paragraph.article-paragraph--dark::first-letter {
       color: var(--red);
+    }
+
+    .critic-review-surface .article-paragraph.first-paragraph.article-paragraph--dark::first-letter {
+      font-size: 4.3rem;
+    }
+
+    @media (max-width: 768px) {
+      .critic-review-surface .article-paragraph.article-paragraph--dark {
+        font-size: 1.02rem;
+        line-height: 1.95;
+      }
+
+      .critic-review-surface .article-paragraph.first-paragraph.article-paragraph--dark::first-letter {
+        font-size: 3.6rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .critic-review-surface .article-paragraph.article-paragraph--dark {
+        font-size: 0.95rem;
+        line-height: 1.85;
+      }
+
+      .critic-review-surface .article-paragraph.first-paragraph.article-paragraph--dark::first-letter {
+        font-size: 3.15rem;
+      }
     }
 
     .article-dark-quote {

@@ -3789,7 +3789,7 @@ function renderCriticReview(review) {
 
   const artistIconSvg = `
     <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
-      <path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.93V21h2v-3.07A7 7 0 0 0 19 11h-2z"/>
+      <path fill="currentColor" d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.46 4.73L5.82 21z"/>
     </svg>
   `.trim();
 

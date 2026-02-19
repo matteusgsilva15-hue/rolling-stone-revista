@@ -3778,8 +3778,8 @@ function renderCriticReview(review) {
   const safeAlbumTitle = String(review.album || review.title || '').trim();
   const safeArtist = String(review.artist || '').trim();
 
-  const heroHtml = `
-    <div class="article-hero-image article-hero-image--dark">
+  const verdictCoverHtml = `
+    <div class="critic-review-verdict-cover" aria-label="Album cover">
       <img src="${escapeHtml(safeCoverUrl)}" alt="${escapeHtml(safeAlbumTitle || 'Album cover')}">
     </div>
   `;
@@ -3800,7 +3800,8 @@ function renderCriticReview(review) {
           <div class="critic-review-divider" aria-hidden="true"></div>
 
           ${scoreHtml ? `
-            <div class="critic-review-verdict" aria-label="Verdict">
+            <div class="critic-review-verdict critic-review-verdict-card" aria-label="Verdict">
+              ${verdictCoverHtml}
               ${scoreHtml}
             </div>
             <div class="critic-review-divider" aria-hidden="true"></div>
@@ -3812,8 +3813,6 @@ function renderCriticReview(review) {
             <span class="critic-review-meta-date">${escapeHtml(formatDate(publishedAt))}</span>
           </div>
         </header>
-
-        ${heroHtml}
 
         <div class="article-body article-body--dark">
           ${paragraphsHtmlWithDropcapAndQuote}

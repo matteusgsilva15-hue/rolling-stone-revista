@@ -345,6 +345,22 @@
       gap: 1.8rem;
     }
 
+    .critic-review-verdict.critic-review-verdict-card {
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background-color: rgba(255,255,255,0.03);
+      background-image:
+        linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.015)),
+        repeating-linear-gradient(
+          135deg,
+          rgba(255,255,255,0.05) 0px,
+          rgba(255,255,255,0.05) 1px,
+          rgba(255,255,255,0.0) 1px,
+          rgba(255,255,255,0.0) 7px
+        );
+    }
+
     .critic-review-verdict-cover {
       width: 152px;
       height: 152px;
@@ -372,6 +388,11 @@
     @media (max-width: 480px) {
       .critic-review-verdict {
         gap: 1.25rem;
+      }
+
+      .critic-review-verdict.critic-review-verdict-card {
+        padding: 0.85rem 0.9rem;
+        border-radius: 16px;
       }
 
       .critic-review-verdict-cover {

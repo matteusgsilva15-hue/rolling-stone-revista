@@ -305,16 +305,30 @@
       padding-bottom: 2.35rem;
     }
 
-    .critic-review-rs-logo {
+    .critic-review-rs-logo-badge {
       position: absolute;
-      top: 1.35rem;
-      right: 2.5rem;
-      height: 34px;
-      width: auto;
+      top: 1.15rem;
+      right: 2.35rem;
+      width: 54px;
+      height: 54px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.50);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       z-index: 5;
-      opacity: 0.95;
       pointer-events: none;
-      filter: drop-shadow(0 10px 22px rgba(0,0,0,0.55));
+    }
+
+    .critic-review-rs-logo {
+      width: 74%;
+      height: 74%;
+      object-fit: contain;
+      display: block;
+      opacity: 0.98;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.35));
     }
 
     @media (max-width: 768px) {
@@ -323,10 +337,11 @@
         padding-bottom: 2.2rem;
       }
 
-      .critic-review-rs-logo {
-        top: 1.25rem;
-        right: 2rem;
-        height: 30px;
+      .critic-review-rs-logo-badge {
+        top: 1.05rem;
+        right: 1.85rem;
+        width: 48px;
+        height: 48px;
       }
     }
 
@@ -336,10 +351,11 @@
         padding-bottom: 2rem;
       }
 
-      .critic-review-rs-logo {
-        top: 1.05rem;
-        right: 1.25rem;
-        height: 26px;
+      .critic-review-rs-logo-badge {
+        top: 0.95rem;
+        right: 1.15rem;
+        width: 42px;
+        height: 42px;
       }
     }
 

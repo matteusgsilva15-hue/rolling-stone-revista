@@ -3800,7 +3800,9 @@ function renderCriticReview(review) {
   container.innerHTML = `
     <div class="article-dark-surface critic-review-surface">
       ${safeRollingStoneLogoUrl ? `
-        <img class="critic-review-rs-logo" src="${escapeHtml(safeRollingStoneLogoUrl)}" alt="Rolling Stone" decoding="async" loading="eager">
+        <div class="critic-review-rs-logo-badge" aria-hidden="true">
+          <img class="critic-review-rs-logo" src="${escapeHtml(safeRollingStoneLogoUrl)}" alt="Rolling Stone" decoding="async" loading="eager">
+        </div>
       ` : ''}
       <button class="article-back-btn article-back-btn--dark" onclick="backToCritics()">← Back to Critics</button>
 

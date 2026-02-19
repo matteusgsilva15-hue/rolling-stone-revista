@@ -384,8 +384,10 @@
         linear-gradient(
           90deg,
           #050505 0%,
-          #0b0b0b 8%,
-          var(--red) 18%,
+          #0b0b0b 6%,
+          color-mix(in srgb, var(--red) 28%, #0b0b0b) 12%,
+          color-mix(in srgb, var(--red) 52%, #0b0b0b) 16%,
+          var(--red) 22%,
           #ffffff 52%,
           #ffffff 100%
         );

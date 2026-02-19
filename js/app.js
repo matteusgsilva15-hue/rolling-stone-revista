@@ -3559,6 +3559,12 @@ function updateCoverDisplay(coverData) {
 
 function showPage(pageName) {
   console.log(`[NAV] Switching to page: ${pageName}`);
+
+  // Hide site header (logo + main nav) on full-content pages (better for screenshots)
+  try {
+    const headerHiddenPages = new Set(['critic-review', 'news-article', 'interviews-article']);
+    document.body.classList.toggle('hide-site-header', headerHiddenPages.has(String(pageName || '')));
+  } catch {}
   
   // Hide all pages
   document.querySelectorAll('.page').forEach(page => {

@@ -428,7 +428,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 14px;
+      border-radius: 0;
       background: transparent;
       border: 1px solid rgba(0,0,0,0.12);
       box-shadow: 0 10px 22px rgba(0,0,0,0.18);
@@ -485,7 +485,7 @@
       .critic-review-verdict-cover {
         width: 146px;
         height: 146px;
-        border-radius: 12px;
+        border-radius: 0;
       }
     }
 

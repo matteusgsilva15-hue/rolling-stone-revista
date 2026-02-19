@@ -561,6 +561,31 @@
       pointer-events: none;
     }
 
+    .critic-review-verdict-cover-wrap.no-vinyl::after {
+      content: none;
+    }
+
+    .critic-review-release-seal {
+      position: absolute;
+      top: -0.35rem;
+      left: -0.35rem;
+      z-index: 2;
+      padding: 0.38rem 0.6rem;
+      border-radius: 999px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--red);
+      background: rgba(255,255,255,0.92);
+      border: 1px solid color-mix(in srgb, var(--red) 48%, rgba(255,255,255,0));
+      box-shadow: 0 10px 22px rgba(0,0,0,0.26);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+
     .critic-review-verdict-cover {
       width: 188px;
       height: 188px;

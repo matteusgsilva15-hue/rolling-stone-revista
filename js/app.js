@@ -3741,7 +3741,21 @@ function renderCriticReview(review) {
 
   const subtitle = String(review.subtitle || review.subheadline || review.deck || '').trim();
   const pullQuote = String(review.pullQuote || review.quote || '').trim();
-  const releaseTypeLabel = formatCriticReleaseType(review?.releaseType || review?.format || review?.kind || '') || 'ALBUM';
+  const releaseTypeRaw = String(review?.releaseType || review?.format || review?.kind || '').trim().toLowerCase();
+  const releaseType = (() => {
+    if (releaseTypeRaw === 'single') return 'single';
+    if (releaseTypeRaw === 'ep') return 'ep';
+    if (releaseTypeRaw === 'album' || releaseTypeRaw === '') return 'album';
+    if (releaseTypeRaw.includes('single')) return 'single';
+    if (releaseTypeRaw.includes('ep')) return 'ep';
+    if (releaseTypeRaw.includes('album')) return 'album';
+    return 'album';
+  })();
+
+  const releaseTypeLabel = formatCriticReleaseType(releaseTypeRaw) || 'ALBUM';
+  const isAlbumReview = releaseType === 'album';
+  const reviewKicker = releaseType === 'single' ? 'SINGLE REVIEW' : releaseType === 'ep' ? 'EP REVIEW' : 'ALBUM REVIEW';
+  const sealText = releaseType === 'single' ? 'HOT TRACK' : releaseType === 'ep' ? 'EP REVIEW' : '';
 
   const pullQuoteAttrib = String(review.author || '').trim();
   const pullQuoteHtml = pullQuote ? `
@@ -3795,8 +3809,13 @@ function renderCriticReview(review) {
 
   const safeRollingStoneLogoUrl = sanitizeUrl('https://images.seeklogo.com/logo-png/42/1/rolling-stone-logo-png_seeklogo-427429.png') || '';
 
+  const verdictCoverWrapClass = isAlbumReview
+    ? `critic-review-verdict-cover-wrap vinyl-tier-${escapeHtml(vinylTier)}`
+    : 'critic-review-verdict-cover-wrap no-vinyl';
+
   const verdictCoverHtml = `
-    <div class="critic-review-verdict-cover-wrap vinyl-tier-${escapeHtml(vinylTier)}" aria-label="Album cover">
+    <div class="${verdictCoverWrapClass}" aria-label="Album cover">
+      ${!isAlbumReview && sealText ? `<div class="critic-review-release-seal critic-review-release-seal--${escapeHtml(releaseType)}">${escapeHtml(sealText)}</div>` : ''}
       <div class="critic-review-verdict-cover">
         <img src="${escapeHtml(safeCoverUrl)}" alt="${escapeHtml(safeAlbumTitle || 'Album cover')}">
       </div>
@@ -3815,7 +3834,7 @@ function renderCriticReview(review) {
       <div class="article-dark">
         <header class="critic-review-header" aria-label="Review header">
           <div class="critic-review-intro">
-            <div class="critic-review-label">ALBUM REVIEW</div>
+            <div class="critic-review-label">${escapeHtml(reviewKicker)}</div>
             <h1 class="article-dark-headline">${escapeHtml(safeAlbumTitle)}</h1>
             ${safeArtist ? `<p class="critic-review-artistline"><span class="critic-review-artist-icon" aria-hidden="true">${artistIconSvg}</span>${escapeHtml(safeArtist)}</p>` : ''}
             ${subtitle ? `<p class="article-dark-deck">${escapeHtml(subtitle)}</p>` : ''}

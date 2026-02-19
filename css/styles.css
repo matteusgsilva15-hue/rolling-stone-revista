@@ -370,7 +370,8 @@
       background-image: linear-gradient(
         90deg,
         var(--red) 0%,
-        var(--red) 28%,
+        var(--red) 18%,
+        #ffffff 72%,
         #ffffff 100%
       );
     }

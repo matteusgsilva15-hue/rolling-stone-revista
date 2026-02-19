@@ -2065,6 +2065,10 @@
     .critic-review-score--good .critic-review-score-value { color: #ca8a04; }
     .critic-review-score--poor .critic-review-score-value { color: #dc2626; }
 
+    .critic-review-verdict-card .critic-review-score-value {
+      color: #ffffff;
+    }
+
     @media (max-width: 480px) {
       .critic-review-score-value {
         font-size: 4rem;
@@ -2080,11 +2084,19 @@
       font-weight: 800;
     }
 
+    .critic-review-verdict-card .critic-review-score-label {
+      color: #ffffff;
+    }
+
     .critic-review-score-note {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.78rem;
       color: rgba(255,255,255,0.65);
       font-weight: 500;
+    }
+
+    .critic-review-verdict-card .critic-review-score-note {
+      color: #ffffff;
     }
 
     .critic-review-body-section {

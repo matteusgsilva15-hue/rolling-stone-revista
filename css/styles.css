@@ -383,9 +383,9 @@
         ),
         linear-gradient(
           90deg,
-          var(--red) 0%,
-          var(--red) 12%,
-          #0b0b0b 30%,
+          #0b0b0b 0%,
+          #0b0b0b 10%,
+          var(--red) 26%,
           #ffffff 58%,
           #ffffff 100%
         );

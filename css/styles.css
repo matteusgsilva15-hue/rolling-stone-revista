@@ -2603,6 +2603,8 @@
 
     .critic-review-surface .article-paragraph.first-paragraph.article-paragraph--dark::first-letter {
       font-size: 4.3rem;
+      line-height: 0.72;
+      margin-top: 0.02rem;
     }
 
     @media (max-width: 768px) {
@@ -2613,6 +2615,8 @@
 
       .critic-review-surface .article-paragraph.first-paragraph.article-paragraph--dark::first-letter {
         font-size: 3.6rem;
+        line-height: 0.70;
+        margin-top: 0.02rem;
       }
     }
 
@@ -2624,6 +2628,8 @@
 
       .critic-review-surface .article-paragraph.first-paragraph.article-paragraph--dark::first-letter {
         font-size: 3.15rem;
+        line-height: 0.68;
+        margin-top: 0.02rem;
       }
     }
 

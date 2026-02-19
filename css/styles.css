@@ -384,9 +384,9 @@
         linear-gradient(
           90deg,
           #0b0b0b 0%,
-          #0b0b0b 10%,
-          var(--red) 26%,
-          #ffffff 58%,
+          #0b0b0b 6%,
+          var(--red) 18%,
+          #ffffff 52%,
           #ffffff 100%
         );
     }

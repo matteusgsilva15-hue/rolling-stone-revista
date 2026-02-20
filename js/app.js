@@ -107,6 +107,23 @@ function ensureFirebaseInit() {
       window.firebase.initializeApp(FIREBASE_RUNTIME.config);
     }
     __fbAuth = window.firebase.auth();
+    // Handle redirect-based login results (useful on iOS/Safari where popups may be blocked).
+    if (__fbAuth && !__fbAuth.__redirectHandled && typeof __fbAuth.getRedirectResult === 'function') {
+      __fbAuth.__redirectHandled = true;
+      __fbAuth.getRedirectResult()
+        .then((result) => {
+          if (result && result.user) {
+            try { logLine('✓ Login concluído (Firebase redirect).', 'success'); } catch {}
+          }
+          try {
+            updateFirebaseAuthUI();
+            updateAdminPublishLock();
+          } catch {}
+        })
+        .catch((e) => {
+          if (isDebugMode()) console.warn('[FIREBASE] redirect result failed', e);
+        });
+    }
     __fbDb = window.firebase.firestore();
     __fbStorage = (firebaseStorageWanted() && window.firebase.storage) ? window.firebase.storage() : null;
     __fbInited = true;
@@ -309,7 +326,21 @@ async function requireFirebaseLogin() {
     if (!isAllowedFirebaseUser(user)) throw new Error('Conta Google não autorizada para publicar.');
     return user;
   } catch (e) {
+    const code = String(e && e.code ? e.code : '');
     const msg = e && e.message ? e.message : String(e || 'Falha no login');
+
+    // Popup login can fail on iOS/Safari or embedded browsers.
+    // Fallback to redirect for the most common non-user-cancel errors.
+    if (code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment') {
+      try {
+        await __fbAuth.signInWithRedirect(provider);
+        throw new Error('Redirecionando para login Google…');
+      } catch (e2) {
+        const msg2 = e2 && e2.message ? e2.message : String(e2 || msg);
+        throw new Error(msg2);
+      }
+    }
+
     throw new Error(msg);
   }
 }
@@ -1904,12 +1935,35 @@ async function apiOrStaticCover() {
 // F) IMAGE UPLOAD
 // ==========================================
 
+const MAX_IMAGE_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB
+const ALLOWED_IMAGE_MIME_TYPES = new Set([
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+  'image/gif'
+]);
+
+function validateImageFileForUpload(file) {
+  if (!file) throw new Error('Arquivo inválido');
+  const mimeType = String(file.type || '').toLowerCase();
+  if (!ALLOWED_IMAGE_MIME_TYPES.has(mimeType)) {
+    throw new Error('Formato de imagem não suportado. Use JPG, PNG, WEBP ou GIF.');
+  }
+  const size = Number(file.size || 0);
+  if (Number.isFinite(size) && size > MAX_IMAGE_UPLOAD_BYTES) {
+    const mb = (MAX_IMAGE_UPLOAD_BYTES / (1024 * 1024));
+    throw new Error(`Imagem muito grande. Limite: ${mb}MB.`);
+  }
+}
+
 async function uploadImage(fileInput) {
   if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
     return null;
   }
 
   const file = fileInput.files[0];
+  validateImageFileForUpload(file);
 
   // Prefer Cloudinary when configured (faster + avoids Firebase Storage billing/CORS issues).
   if (cloudinaryEnabled()) {
@@ -1980,7 +2034,11 @@ function getImageUrlOrUpload(urlInputId, fileInputId) {
   const fileInput = document.getElementById(fileInputId);
 
   if (urlInput && urlInput.value.trim()) {
-    return Promise.resolve(urlInput.value.trim());
+    const safe = sanitizeUrl(urlInput.value.trim());
+    if (!safe) {
+      return Promise.reject(new Error('URL de imagem inválida. Use um link http(s) ou selecione um arquivo.'));
+    }
+    return Promise.resolve(safe);
   }
 
   if (fileInput) {
@@ -3072,6 +3130,8 @@ function renderCritics(critics) {
     const img = document.createElement('img');
     img.src = coverUrl;
     img.alt = album ? String(album) : 'Album cover';
+    img.loading = 'lazy';
+    img.decoding = 'async';
     image.appendChild(img);
 
     const overlay = document.createElement('div');
@@ -3165,17 +3225,22 @@ function renderNews(newsItems) {
   const fragment = document.createDocumentFragment();
 
   newsItems.forEach((item) => {
+    const itemId = item?.id || item?.__backendId || item?._id || '';
     const card = document.createElement('div');
     card.className = 'news-card-item';
     card.tabIndex = 0;
     card.setAttribute('role', 'button');
-    card.addEventListener('click', () => viewNews(item.id));
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        viewNews(item.id);
-      }
-    });
+    if (itemId) {
+      card.addEventListener('click', () => viewNews(itemId));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          viewNews(itemId);
+        }
+      });
+    } else {
+      card.setAttribute('aria-disabled', 'true');
+    }
 
     const categoryEl = document.createElement('div');
     categoryEl.className = 'news-card-category';
@@ -3243,17 +3308,22 @@ function renderInterviews(interviews) {
   const fragment = document.createDocumentFragment();
 
   interviews.forEach((item) => {
+    const itemId = item?.id || item?.__backendId || item?._id || '';
     const card = document.createElement('div');
     card.className = 'interview-card';
     card.tabIndex = 0;
     card.setAttribute('role', 'button');
-    card.addEventListener('click', () => viewInterview(item.id));
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        viewInterview(item.id);
-      }
-    });
+    if (itemId) {
+      card.addEventListener('click', () => viewInterview(itemId));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          viewInterview(itemId);
+        }
+      });
+    } else {
+      card.setAttribute('aria-disabled', 'true');
+    }
 
     const label = document.createElement('div');
     label.className = 'interview-label';
@@ -3327,15 +3397,17 @@ function renderLatest(items) {
   const fragment = document.createDocumentFragment();
 
   items.forEach((item) => {
+    const itemId = item?.id || item?.__backendId || item?._id || '';
     const card = document.createElement('div');
     card.className = 'post-card';
     card.tabIndex = 0;
     card.setAttribute('role', 'button');
 
     const open = () => {
-      if (item.type === 'critic') return viewCritic(item.id);
-      if (item.type === 'news') return viewNews(item.id);
-      if (item.type === 'interview') return viewInterview(item.id);
+      if (!itemId) return;
+      if (item.type === 'critic') return viewCritic(itemId);
+      if (item.type === 'news') return viewNews(itemId);
+      if (item.type === 'interview') return viewInterview(itemId);
       if (item.type === 'chart') return showPage('charts');
     };
 
@@ -3354,6 +3426,8 @@ function renderLatest(items) {
     const img = document.createElement('img');
     img.src = imageUrl;
     img.alt = String(item.headline || item.album || item.title || 'Post image');
+    img.loading = 'lazy';
+    img.decoding = 'async';
     imageWrap.appendChild(img);
 
     const meta = document.createElement('div');

@@ -286,7 +286,7 @@
     }
 
     #page-critics .page-content {
-      background: #000;
+      background: var(--bg);
     }
 
     body.hide-site-header #hero-header,

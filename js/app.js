@@ -3713,6 +3713,242 @@ function showAdminPanel(section) {
     setupLocalBackupUI();
     refreshPostsManager();
   }
+
+  if (section === 'critics-archive') {
+    setupCriticsArchive();
+    refreshCriticsArchive({ forceReload: true });
+  }
+}
+
+// ==========================================
+// M) CRITICS ARCHIVE (Admin)
+// ==========================================
+
+let CRITICS_ARCHIVE_READY = false;
+let CRITICS_ARCHIVE_CACHE = null;
+
+function getCriticComparableDate(item) {
+  const t = item?.publishedAt || item?.createdAt || 0;
+  const ms = new Date(t).getTime();
+  return Number.isFinite(ms) ? ms : 0;
+}
+
+function sortCriticsNewestFirst(a, b) {
+  return getCriticComparableDate(b) - getCriticComparableDate(a);
+}
+
+function sortCriticsOldestFirst(a, b) {
+  return getCriticComparableDate(a) - getCriticComparableDate(b);
+}
+
+function getCriticArchiveId(item) {
+  return String(item?.id || item?.__backendId || item?._id || '').trim();
+}
+
+function normalizeArchiveQuery(q) {
+  return String(q || '').trim().toLowerCase();
+}
+
+function criticMatchesArchiveQuery(item, q) {
+  const query = normalizeArchiveQuery(q);
+  if (!query) return true;
+
+  const scoreValue = Number(item?.score);
+  const scoreText = Number.isFinite(scoreValue) ? String(Math.round(scoreValue * 10) / 10) : '';
+
+  const hay = [
+    item?.album,
+    item?.title,
+    item?.artist,
+    item?.subheadline,
+    item?.quote,
+    item?.author,
+    item?.content,
+    item?.excerpt,
+    item?.releaseType,
+    item?.format,
+    item?.kind,
+    scoreText,
+    item?.publishedAt,
+    item?.createdAt
+  ].filter(Boolean).join(' ').toLowerCase();
+
+  return hay.includes(query);
+}
+
+function criticMatchesReleaseType(item, filterValue) {
+  const f = String(filterValue || 'all').trim().toLowerCase();
+  if (!f || f === 'all') return true;
+
+  const raw = String(item?.releaseType || item?.format || item?.kind || '').trim().toLowerCase();
+  if (!raw) return false;
+
+  if (f === 'album') return raw === 'album';
+  if (f === 'ep') return raw === 'ep';
+  if (f === 'single') return raw === 'single';
+  return true;
+}
+
+function renderCriticsArchive(items, options) {
+  const listEl = document.getElementById('critics-archive-list');
+  if (!listEl) return;
+
+  const safeItems = Array.isArray(items) ? items : [];
+  const feedIds = options?.feedIds instanceof Set ? options.feedIds : new Set();
+
+  listEl.textContent = '';
+
+  if (safeItems.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'post-item';
+    empty.innerHTML = '<div class="post-item-info"><div class="post-item-title">No reviews found</div><div class="post-item-meta">Try a different search or filter</div></div>';
+    listEl.appendChild(empty);
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+
+  safeItems.forEach((item) => {
+    const row = document.createElement('div');
+    row.className = 'post-item';
+
+    const info = document.createElement('div');
+    info.className = 'post-item-info';
+    info.style.cursor = 'pointer';
+    info.title = 'Clique para editar';
+
+    const title = document.createElement('div');
+    title.className = 'post-item-title';
+    title.textContent = getItemDisplayTitle(item) || '(Sem título)';
+
+    const meta = document.createElement('div');
+    meta.className = 'post-item-meta';
+    const scoreValue = Number(item?.score);
+    const scoreDisplay = Number.isFinite(scoreValue) ? scoreValue.toFixed(1) : '';
+    const releaseTypeLabel = formatCriticReleaseType(item?.releaseType || item?.format || item?.kind || '');
+    const id = getCriticArchiveId(item);
+    const isInFeed = id && feedIds.has(id);
+
+    const parts = [];
+    if (scoreDisplay) parts.push(`SCORE ${scoreDisplay}`);
+    if (releaseTypeLabel) parts.push(releaseTypeLabel);
+    parts.push(formatDate(item?.publishedAt));
+    parts.push(isInFeed ? 'FEED' : 'ARCHIVE');
+    meta.textContent = parts.filter(Boolean).join(' • ');
+
+    info.appendChild(title);
+    info.appendChild(meta);
+    info.addEventListener('click', () => beginEditFromManager(item));
+
+    const actions = document.createElement('div');
+    actions.style.display = 'flex';
+    actions.style.gap = '0.5rem';
+    actions.style.alignItems = 'center';
+
+    const openBtn = document.createElement('button');
+    openBtn.type = 'button';
+    openBtn.className = 'post-item-delete-btn';
+    openBtn.textContent = '↗';
+    openBtn.title = 'Abrir no site';
+    openBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const criticId = getCriticArchiveId(item);
+      if (criticId) viewCritic(criticId);
+    });
+
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'post-item-delete-btn';
+    del.textContent = '×';
+    del.title = 'Apagar';
+    del.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      deleteFromManager(item, del);
+    });
+
+    actions.appendChild(openBtn);
+    actions.appendChild(del);
+
+    row.appendChild(info);
+    row.appendChild(actions);
+    fragment.appendChild(row);
+  });
+
+  listEl.appendChild(fragment);
+}
+
+async function refreshCriticsArchive({ forceReload } = {}) {
+  const listEl = document.getElementById('critics-archive-list');
+  if (!listEl) return;
+
+  const searchEl = document.getElementById('critic-archive-search');
+  const releaseEl = document.getElementById('critic-archive-release-type');
+  const sortEl = document.getElementById('critic-archive-sort');
+  const includeFeedEl = document.getElementById('critic-archive-include-feed');
+
+  const query = String(searchEl?.value || '').trim();
+  const releaseFilter = String(releaseEl?.value || 'all');
+  const sortMode = String(sortEl?.value || 'newest');
+  const includeFeed = Boolean(includeFeedEl?.checked);
+
+  if (!CRITICS_ARCHIVE_CACHE || forceReload) {
+    listEl.textContent = '';
+    const loading = document.createElement('div');
+    loading.className = 'post-item';
+    loading.innerHTML = '<div class="post-item-info"><div class="post-item-title">Loading…</div><div class="post-item-meta">Fetching critic reviews</div></div>';
+    listEl.appendChild(loading);
+
+    try {
+      const items = await apiOrStaticList('critic');
+      CRITICS_ARCHIVE_CACHE = (Array.isArray(items) ? items : [])
+        .filter(i => i && (i.status || 'published') !== 'deleted');
+    } catch (e) {
+      CRITICS_ARCHIVE_CACHE = [];
+    }
+  }
+
+  const all = Array.isArray(CRITICS_ARCHIVE_CACHE) ? CRITICS_ARCHIVE_CACHE : [];
+  const newest = [...all].sort(sortCriticsNewestFirst);
+  const feedIds = new Set(newest.slice(0, 6).map(getCriticArchiveId).filter(Boolean));
+
+  let filtered = all
+    .filter((it) => criticMatchesReleaseType(it, releaseFilter))
+    .filter((it) => criticMatchesArchiveQuery(it, query));
+
+  if (!includeFeed) {
+    filtered = filtered.filter((it) => {
+      const id = getCriticArchiveId(it);
+      return id ? !feedIds.has(id) : true;
+    });
+  }
+
+  filtered.sort(sortMode === 'oldest' ? sortCriticsOldestFirst : sortCriticsNewestFirst);
+
+  renderCriticsArchive(filtered, { feedIds });
+}
+
+function setupCriticsArchive() {
+  if (CRITICS_ARCHIVE_READY) return;
+
+  const searchEl = document.getElementById('critic-archive-search');
+  const releaseEl = document.getElementById('critic-archive-release-type');
+  const sortEl = document.getElementById('critic-archive-sort');
+  const includeFeedEl = document.getElementById('critic-archive-include-feed');
+  const refreshBtn = document.getElementById('critic-archive-refresh');
+  const listEl = document.getElementById('critics-archive-list');
+
+  if (!searchEl || !releaseEl || !sortEl || !includeFeedEl || !refreshBtn || !listEl) return;
+
+  const handler = () => refreshCriticsArchive({ forceReload: false });
+  searchEl.addEventListener('input', handler);
+  releaseEl.addEventListener('change', handler);
+  sortEl.addEventListener('change', handler);
+  includeFeedEl.addEventListener('change', handler);
+  refreshBtn.addEventListener('click', () => refreshCriticsArchive({ forceReload: true }));
+
+  CRITICS_ARCHIVE_READY = true;
 }
 
 function setupAdminSidebar() {

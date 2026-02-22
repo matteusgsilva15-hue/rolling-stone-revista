@@ -208,6 +208,7 @@
         <div class="admin-sidebar-section">
          <div class="admin-sidebar-section-title">Manage</div>
          <button class="admin-sidebar-link" data-admin-section="posts" title="Posts"><span class="admin-nav-icon"><svg class="admin-nav-svg" aria-hidden="true"><use href="#i-posts"></use></svg></span><span class="admin-nav-label">Posts</span></button>
+         <button class="admin-sidebar-link" data-admin-section="critics-archive" title="Critics Archive"><span class="admin-nav-icon"><svg class="admin-nav-svg" aria-hidden="true"><use href="#i-review"></use></svg></span><span class="admin-nav-label">Critics Archive</span></button>
         </div>
         <div class="admin-sidebar-section">
          <div class="admin-sidebar-section-title">Demo</div>
@@ -639,6 +640,48 @@ Use double line breaks to create new paragraphs." required style="min-height: 18
           </div>
          </div>
 
+         <!-- PANEL: CRITICS ARCHIVE -->
+         <div class="admin-panel" id="admin-panel-critics-archive">
+          <div style="padding: 2.5rem;">
+           <div style="margin-bottom: 2rem;">
+            <h1 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: var(--text); margin-bottom: 0.3rem;"><span class="admin-panel-title-icon"><svg class="admin-panel-title-svg" aria-hidden="true"><use href="#i-review"></use></svg></span>Critics Archive</h1>
+            <p style="font-family: 'Lora', serif; font-size: 0.95rem; color: var(--text-light);">Search and browse older critic reviews without deleting any data</p>
+           </div>
+
+           <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid #e0e0e0;">
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: end;">
+             <div class="form-group" style="flex: 1; min-width: 260px; margin: 0;">
+              <label class="form-label" for="critic-archive-search">Search</label>
+              <input type="text" class="form-input" id="critic-archive-search" placeholder="Buscar por álbum, artista, texto, nota…">
+             </div>
+             <div class="form-group" style="min-width: 170px; margin: 0;">
+              <label class="form-label" for="critic-archive-release-type">Release Type</label>
+              <select class="form-input" id="critic-archive-release-type">
+               <option value="all" selected>All</option>
+               <option value="album">Album</option>
+               <option value="ep">EP</option>
+               <option value="single">Single</option>
+              </select>
+             </div>
+             <div class="form-group" style="min-width: 170px; margin: 0;">
+              <label class="form-label" for="critic-archive-sort">Sort</label>
+              <select class="form-input" id="critic-archive-sort">
+               <option value="newest" selected>Newest first</option>
+               <option value="oldest">Oldest first</option>
+              </select>
+             </div>
+             <button type="button" class="form-btn" id="critic-archive-refresh" style="width: auto; padding: 0.9rem 1.1rem; margin: 0;">Refresh</button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+             <input type="checkbox" id="critic-archive-include-feed">
+             <label for="critic-archive-include-feed" style="font-family: 'Lora', serif; font-size: 0.95rem; color: var(--text-light);">Include the 6 reviews currently in the feed</label>
+            </div>
+           </div>
+
+           <div class="posts-list" id="critics-archive-list"></div>
+          </div>
+         </div>
+
          <!-- PANEL: DEMO -->
          <div class="admin-panel" id="admin-panel-demo">
           <div style="padding: 2.5rem;">
@@ -772,7 +815,7 @@ Use double line breaks to create new paragraphs." required style="min-height: 18
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-  <script defer src="js/app.js?v=20260220-1"></script>
+  <script defer src="js/app.js?v=20260222-1"></script>
  </body>
 </html>
 

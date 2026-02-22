@@ -36,7 +36,7 @@ No serviço onde você subir o backend, configure:
 - `CORS_ORIGIN` (recomendado)
   - Origem permitida a acessar o backend via browser
   - Para o seu Pages, use:
-    - `https://matteusgsilva15-hue.github.io`
+    - `https://rolling-stonemag.github.io`
   - Você pode adicionar múltiplas origens separadas por vírgula.
 
 - `PUBLIC_BASE_URL` (opcional)
@@ -57,7 +57,7 @@ No serviço onde você subir o backend, configure:
    - Mount Path: `/var/data`
 4. Environment Variables:
    - `ADMIN_TOKEN` = (seu token)
-   - `CORS_ORIGIN` = `https://matteusgsilva15-hue.github.io`
+  - `CORS_ORIGIN` = `https://rolling-stonemag.github.io`
    - `PERSIST_DIR` = `/var/data`
    - `PUBLIC_BASE_URL` = (URL do serviço no Render)
 
@@ -71,7 +71,7 @@ O front-end lê `API_BASE` de duas formas sem precisar rebuild:
 ### Opção A) Por querystring (mais fácil)
 Abra seu site com:
 
-- `https://matteusgsilva15-hue.github.io/rolling-stone-revista/?api=https://SEU_BACKEND`
+- `https://rolling-stonemag.github.io/rolling-stone-revista/?api=https://SEU_BACKEND`
 
 Isso salva em `localStorage` e passa a usar o backend.
 

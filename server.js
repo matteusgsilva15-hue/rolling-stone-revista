@@ -71,7 +71,7 @@ const DEFAULT_CORS_ORIGINS = new Set([
   'http://127.0.0.1:3000',
   'http://localhost:5500',
   'http://127.0.0.1:5500',
-  'https://matteusgsilva15-hue.github.io'
+  'https://rolling-stonemag.github.io'
 ]);
 
 const CORS_ORIGINS = parseCorsOrigins(CORS_ORIGIN_RAW) || DEFAULT_CORS_ORIGINS;

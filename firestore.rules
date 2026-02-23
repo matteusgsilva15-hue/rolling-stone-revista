@@ -5,9 +5,9 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.email == "matteusgsilva15@gmail.com";
     }
 
-    // Leitura pública (site é uma revista pública)
+    // Leitura restrita: somente admin autenticado pode ler/escrever
     match /{document=**} {
-      allow read: if true;
+      allow read: if isAdmin();
     }
 
     // Escrita somente para admin autenticado

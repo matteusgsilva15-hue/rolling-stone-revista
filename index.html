@@ -12,6 +12,18 @@
 
 </head>
  <body class="h-full">
+  <!-- SITE LOGIN OVERLAY (blocks all content until authorized) -->
+  <div id="site-login-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:99999; align-items:center; justify-content:center;">
+    <div style="background:var(--surface); padding:2rem; border-radius:8px; max-width:520px; width:90%; text-align:center;">
+      <h2 style="font-family: 'Playfair Display', serif; margin:0 0 0.5rem;">Área restrita — login necessário</h2>
+      <p style="color:var(--text-light); margin:0 0 1rem;">Faça login com sua conta Google autorizada para acessar o site.</p>
+      <div style="display:flex; gap:0.5rem; justify-content:center; margin-top:0.5rem;">
+        <button id="site-login-btn" class="form-btn" style="padding:0.7rem 1rem;">Entrar com Google</button>
+        <button id="site-reload-btn" class="form-btn" style="padding:0.7rem 1rem; background:#f5f5f5; color:var(--text);">Recarregar</button>
+      </div>
+      <p id="site-login-hint" style="font-size:0.85rem; color:var(--text-light); margin-top:1rem;">Se o login não abrir, verifique o bloqueio de popups ou tente em outro navegador.</p>
+    </div>
+  </div>
   <svg class="admin-icon-sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
    <symbol id="i-review" viewBox="0 0 24 24">
     <path d="M4 20h4l11-11a2 2 0 0 0 0-2.8l-1.2-1.2a2 2 0 0 0-2.8 0L4 16v4z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />

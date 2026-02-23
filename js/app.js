@@ -4867,12 +4867,67 @@ function initializeApp() {
     if (!fb && !hasBackend && !isFileProtocol()) {
       logLine('Modo estático detectado (sem Firebase/Backend). Publicação fica desabilitada; o site tenta carregar conteúdo dos JSONs em /data.', 'warning');
     }
-    loadCover();
-    loadLatest();
-    loadCritics();
-    loadNews();
-    loadInterviews();
-    loadCharts();
+
+    const startLoadingContent = () => {
+      loadCover();
+      loadLatest();
+      loadCritics();
+      loadNews();
+      loadInterviews();
+      loadCharts();
+    };
+
+    // If Firebase is enabled, require an allowed admin login before loading content
+    if (fb && ensureFirebaseInit()) {
+      const user = currentFirebaseUser();
+      if (!user || !isAllowedFirebaseUser(user)) {
+        // Show overlay and bind buttons
+        const overlay = document.getElementById('site-login-overlay');
+        const loginBtn = document.getElementById('site-login-btn');
+        const reloadBtn = document.getElementById('site-reload-btn');
+        if (overlay) overlay.style.display = 'flex';
+
+        if (loginBtn && !loginBtn.__bound) {
+          loginBtn.__bound = true;
+          loginBtn.addEventListener('click', async () => {
+            try {
+              await requireFirebaseLogin();
+              updateFirebaseAuthUI();
+              if (overlay) overlay.style.display = 'none';
+              startLoadingContent();
+            } catch (e) {
+              logLine(`Login failed: ${e?.message || e}`, 'error');
+              alert(e?.message || String(e || 'Falha no login'));
+            }
+          });
+        }
+
+        if (reloadBtn && !reloadBtn.__bound) {
+          reloadBtn.__bound = true;
+          reloadBtn.addEventListener('click', () => window.location.reload());
+        }
+
+        // Also listen for auth state changes to automatically proceed
+        try {
+          if (__fbAuth && !__fbAuth.__siteHook) {
+            __fbAuth.__siteHook = true;
+            __fbAuth.onAuthStateChanged((u) => {
+              if (u && isAllowedFirebaseUser(u)) {
+                const overlay2 = document.getElementById('site-login-overlay');
+                if (overlay2) overlay2.style.display = 'none';
+                updateFirebaseAuthUI();
+                startLoadingContent();
+              }
+            });
+          }
+        } catch (e) {}
+
+        return;
+      }
+    }
+
+    // Default: load content immediately
+    startLoadingContent();
   });
 
   logLine('Ready to publish content', 'success');
